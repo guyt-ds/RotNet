@@ -1,11 +1,5 @@
 {
-    "name": "Affiliate Marketplace",
-    "description": "An affiliate marketplace for campaigns on the TON blockchain.",
     "url": "https://raw.githubusercontent.com/guyt-ds/RotNet/master/manifest.json",
-    "icons": [
-        {
-            "url": "https://raw.githubusercontent.com/guyt-ds/RotNet/master/icon.png",
-            "size": "192x192"
-        }
-    ]
+    "name": "Affiliate Center",
+    "iconUrl": "https://raw.githubusercontent.com/guyt-ds/RotNet/master/icon.png"
 }
