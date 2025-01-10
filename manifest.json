@@ -1,24 +1,11 @@
 {
     "name": "Affiliate Marketplace",
-    "short_name": "Affiliate",
     "description": "An affiliate marketplace for campaigns on the TON blockchain.",
+    "url": "https://raw.githubusercontent.com/guyt-ds/RotNet/master/manifest.json",
     "icons": [
         {
-            "src": "https://example.com/icon.png",
-            "sizes": "192x192",
-            "type": "image/png"
+            "url": "https://raw.githubusercontent.com/guyt-ds/RotNet/master/assets/icon.png",
+            "size": "192x192"
         }
-    ],
-    "start_url": "/index.html",
-    "display": "standalone",
-    "background_color": "#FFFFFF",
-    "theme_color": "#000000",
-    "connect": {
-        "wallets": [
-            "tonconnect"
-        ],
-        "connector": {
-            "type": "tonconnect"
-        }
-    }
+    ]
 }
