@@ -1,3 +1,99 @@
 Citi can migrate its existing off-chain client-due-diligence stack—identity verification, KYC/AML, credit-risk analytics and asset-valuation—to an on-chain credential layer.
 Using the open ERC-3643 permissioned-token standard and its companion ONCHAINID, every customer completes compliance once, receives a blockchain wallet bound to verifiable credentials, and can immediately interact with any Citi-approved real-world-asset (RWA) token—starting with fractional fine art.
 This shift collapses multiple siloed processes into a single programmable rail, reduces re-work, creates an auditable history of risk decisions, and positions Citi as the trusted identity “spine” for a tokenised financial market.
+
+
+## 1 From off-chain procedures to on-chain credentials
+
+### 1.1 Core credential types Citi can issue
+
+| Procedure today                       | On-chain primitive                             | Standard / tooling                                                                                                                       |
+| ------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Government-ID, proof-of-address (KYC) | **Legal-identity claim** attached to ONCHAINID | ERC-3643 & ONCHAINID smart contract ([Tokeny][1])                                                                                        |
+| AML / sanctions screening             | **Compliance score** updated by Citi oracle    | FATF Travel-Rule data model ([Sumsub][2])                                                                                                |
+| Credit bureau score                   | **Credit-risk Soulbound Token (SBT)**          | TransUnion-Spring Labs pilot ([TransUnion Newsroom][3]); Spectral Finance on-chain score ([Alchemy][4]); Masa hybrid score ([GitHub][5]) |
+| Accredited-investor status            | **Eligibility claim** revocable on-chain       | ERC-734/735 claim registry ([Medium][6])                                                                                                 |
+| Source-of-wealth attestation          | **Proof-of-funds credential**                  | KILT verifiable-credential toolkit ([KILT][7])                                                                                           |
+
+Each claim is a verifiable credential stored in the client’s ONCHAINID; smart-contracts read those claims before allowing any transfer of a permissioned token.
+
+
+
+## 3 Art tokenisation as the flagship use-case
+
+### 3.1 Custody & provenance
+
+* Citi secures the painting in a free-port vault; a tamper-evident digital twin is hashed on-chain ([Citi][10]).
+* Precedent: Maecenas tokenised 31.5 % of Warhol’s *14 Small Electric Chairs* for \$1.7 m in 2018 ([blog.maecenas.co][11]), while Masterworks has securitised > \$1 bn art under SEC Regulation A + ([FinTech Weekly - Home Page][12]).
+
+### 3.2 Token issuance
+
+* Citi mints an ERC-3643 security-token representing 100 % economic interest. Each fraction inherits transfer-rules tied to client credentials.
+
+### 3.3 Ongoing valuation
+
+* Monthly, Sotheby’s-certified appraisers deliver a price; Citi’s oracle posts the new fair value to Chainlink-compatible feeds so DeFi pools and investors see a single truth source ([Chainlink][13], [Medium][14]).
+
+### 3.4 Liquidity & leverage
+
+* Tokens can trade on regulated ATS venues that already support ERC-3643 (e.g., 21X, Tokeny) ([Aventus][15]).
+* Holders can borrow stablecoins using art tokens as collateral; loan smart-contracts continuously verify the owner’s credit SBT and art price feed.
+
+
+## 1  Credit-bureau score → Credit-risk Soulbound Token (SBT)
+
+### What it is
+
+A *non-transferable* token—minted to the client’s wallet—that encodes either a raw bureau score (e.g., 710) or a risk tier (A/B/C).  Because it cannot move, lenders know the score really belongs to that wallet owner.
+
+### How it’s being done today
+
+| Pilot                                   | Approach                                                                                                                                                                                 | Why it matters                                                                             |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **TransUnion × Spring Labs × Quadrata** | TransUnion packages off-chain bureau data; Spring Labs hashes it and delivers it to wallets as a “ky0x Digital Passport” credential ([TransUnion Newsroom][1], [TransUnion Newsroom][2]) | Brings a top-three U.S. bureau directly into DeFi pools without revealing raw PII.         |
+| **Spectral Finance**                    | Calculates a *MACRO Score* from the borrower’s on-chain history and issues it as a non-transferable NFT ([Samsung Next][3], [Alchemy][4])                                                | Purely blockchain-native credit model already integrated by several lending dApps.         |
+| **Masa Finance**                        | Mints a *hybrid* SBT that aggregates on-chain behaviour **and** optional off-chain bureau or bank feeds ([GitHub][5], [Medium][6])                                                       | Shows how Web2 data and Web3 data can coexist in one credential for emerging-market users. |
+
+### Why Citi cares
+
+*Existing credit-risk rules (LTV, pricing, limits) can read the SBT on-chain; no PDF uploads, no manual review.*
+If a score drops, Citi burns the old token and issues a new one—every liquidity pool instantly sees the change.
+
+---
+
+## 2  Accredited-investor status → Revocable **Eligibility claim**
+
+### Technical standard
+
+*ERC-734 / ERC-735* define an on-chain **claim registry**.  An attester (e.g., Citi Private Bank) signs a structured statement such as *“Wallet 0xABC qualifies under SEC Rule 501(a)(5)”* and writes it to the customer’s ONCHAINID contract ([docs.onchainid.com][7], [Medium][8]).  Claims can be **revoked** if circumstances change.
+
+### Regulatory context
+
+The SEC requires issuers to maintain a “reasonable belief” that each buyer is accredited ([SEC][9], [Morgan Lewis][10]).  A signed on-chain claim—timestamped and linked to KYC files—provides an auditable trail and can be checked automatically by any ERC-3643 security-token before transfer.
+
+### Emerging experiments
+
+* Substack research shows how a Soulbound “Accredited Investor” token can satisfy Rule 506(c) verification while preserving privacy ([l2ivresearch.substack.com][11]).
+* Tokeny’s ERC-3643 white-paper adopts ERC-734/735 claims for exactly this purpose, embedding them into its permissioned-token flow ([Tokeny][12], [docs.erc3643.org][13]).
+
+---
+
+## 3  Source-of-wealth / Source-of-funds → “Proof-of-Funds” verifiable credential
+
+### Role in compliance
+
+AML rules often demand evidence of how the customer acquired the money they invest.  Today this is a PDF bank statement; on-chain it can be a *verifiable credential* whose hash is stored in a DID.
+
+### KILT Protocol toolkit
+
+KILT is a Polkadot-based identity blockchain that lets *trusted attesters* issue, revoke and verify rich credentials while the underlying documents stay private ([KILT][14], [docs.kilt.io][15], [kilt-protocol.org][16]).
+
+* A bank (or audit firm) reviews the documents, signs a “Proof-of-Funds” statement, and writes only the hash + metadata to the customer’s wallet.
+* Any smart contract can call KILT’s verification API to confirm the credential is valid without ever seeing the documents.
+
+### Why it matters for Citi
+
+*Enables art-buyers (or any RWA investor) to prove large legitimate wealth once, then reuse that proof across all Citi token offerings.*
+Third-party vaults, Sotheby’s appraisers or even external exchanges could all rely on the same credential.
+
+---
