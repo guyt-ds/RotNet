@@ -1,0 +1,3 @@
+Citi can migrate its existing off-chain client-due-diligence stack—identity verification, KYC/AML, credit-risk analytics and asset-valuation—to an on-chain credential layer.
+Using the open ERC-3643 permissioned-token standard and its companion ONCHAINID, every customer completes compliance once, receives a blockchain wallet bound to verifiable credentials, and can immediately interact with any Citi-approved real-world-asset (RWA) token—starting with fractional fine art.
+This shift collapses multiple siloed processes into a single programmable rail, reduces re-work, creates an auditable history of risk decisions, and positions Citi as the trusted identity “spine” for a tokenised financial market.
