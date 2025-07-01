@@ -17,6 +17,44 @@ contract LoanStorage {
         bool repaid;
     }
 
+struct LoanWindow {
+    uint256 issuanceDate;
+    uint256 maturityDate;
+    uint256 amount;
+    bool repaid;
+    // Add fields like interestRate, status, notes, etc. as needed
+}
+
+    // branch -> loanWindows -> 
+    mapping(address => mapping(uint256 => LoanWindow)) public loans;
+    
+    
+    function issueLoan(
+        address branch,
+        uint256 windowId,
+        uint256 amount,
+        uint256 issuanceDate,
+        uint256 maturityDate
+    ) external onlyIssuer {
+        LoanWindow storage lw = loans[branch][windowId];
+    
+        // If this is the first issuance in this window
+        if (lw.amount == 0) {
+            lw.issuanceDate = issuanceDate;
+            lw.maturityDate = maturityDate;
+        }
+    
+        lw.amount += amount;
+    
+        emit LoanIssued(branch, windowId, amount, issuanceDate, maturityDate);
+    }
+    
+    function getLoan(address branch, uint256 windowId) external view returns (LoanWindow memory) {
+        return loans[branch][windowId];
+    }
+
+
+
     IERC20 public principalToken;
     IERC20 public interestToken;
 
