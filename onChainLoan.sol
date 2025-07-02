@@ -27,6 +27,7 @@ contract LoanManager {
     // Mappings
     mapping(uint256 => LoanWindow) public loanWindows; // windowId => LoanWindow
     mapping(uint256 => Loan[]) public loansPerWindow;  // windowId => list of Loans
+    mapping(address => uint256[]) public borrowerLoanWindows; // borrower => list of windowIds
 
     // Events
     event LoanIssued(uint256 indexed windowId, address indexed borrower, uint256 amount);
@@ -38,20 +39,36 @@ contract LoanManager {
         address borrower,
         uint256 amount
     ) external onlyIssuer {
+        LoanWindow storage window = loanWindows[windowId];
+
         // If this is the first time issuing in this window
-        if (loanWindows[windowId].createdAt == 0) {
-            loanWindows[windowId].createdAt = block.timestamp;
+        if (window.createdAt == 0) {
+            window.createdAt = block.timestamp;
         }
 
         // Update total in LoanWindow
-        loanWindows[windowId].totalAmount += amount;
+        window.totalAmount += amount;
 
-        // Store individual loan
+        // Add the loan to the loan array
         loansPerWindow[windowId].push(Loan({
             borrower: borrower,
             amount: amount,
             issuedAt: block.timestamp
         }));
+
+        // Track that this borrower has a loan in this window
+        // Only push if this is their first loan in this window
+        bool alreadyTracked = false;
+        uint256[] storage windows = borrowerLoanWindows[borrower];
+        for (uint i = 0; i < windows.length; i++) {
+            if (windows[i] == windowId) {
+                alreadyTracked = true;
+                break;
+            }
+        }
+        if (!alreadyTracked) {
+            windows.push(windowId);
+        }
 
         emit LoanIssued(windowId, borrower, amount);
     }
@@ -60,6 +77,22 @@ contract LoanManager {
     function repayLoanWindow(uint256 windowId) external onlyIssuer {
         require(loanWindows[windowId].totalAmount > 0, "Loan window does not exist or already repaid");
 
+        // Remove borrower references
+        Loan[] storage loans = loansPerWindow[windowId];
+        for (uint i = 0; i < loans.length; i++) {
+            address borrower = loans[i].borrower;
+            uint256[] storage windows = borrowerLoanWindows[borrower];
+
+            // Remove this windowId from borrowerLoanWindows[borrower]
+            for (uint j = 0; j < windows.length; j++) {
+                if (windows[j] == windowId) {
+                    windows[j] = windows[windows.length - 1]; // swap with last
+                    windows.pop(); // remove last
+                    break;
+                }
+            }
+        }
+
         // Delete stored data
         delete loanWindows[windowId];
         delete loansPerWindow[windowId];
@@ -67,13 +100,16 @@ contract LoanManager {
         emit LoanWindowRepaid(windowId);
     }
 
-    // Get all loans for a window
+    // View functions
     function getLoans(uint256 windowId) external view returns (Loan[] memory) {
         return loansPerWindow[windowId];
     }
 
-    // Get loan window info
     function getLoanWindow(uint256 windowId) external view returns (LoanWindow memory) {
         return loanWindows[windowId];
+    }
+
+    function getLoanWindowsByBorrower(address borrower) external view returns (uint256[] memory) {
+        return borrowerLoanWindows[borrower];
     }
 }
